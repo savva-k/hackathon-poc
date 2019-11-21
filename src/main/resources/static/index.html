@@ -1,0 +1,51 @@
+<html>
+<head>
+  <title>EvenSource + Reactive streams</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function() {
+    
+      var eventSource = new EventSource("/stream");
+      eventSource.onmessage = function(event) {
+        console.log(event);
+        $("#result").append("<p>" + event.data + "</p>")
+      }
+      
+      eventSource.onerror = function(event) {
+        $("#result").append("<p class='error'>" + event.data + "</p>")
+      }
+      
+      $("#sendEvent").click(function() {
+        var eventValue = $("#eventText").val();
+        if (eventValue) {
+          $.post("/event", { text: eventValue }, () => console.log(eventSource.readyState));
+        }
+      });
+    });
+  
+  
+  </script>
+  <style>
+    #result {
+      margin-top: 25px;
+      border: 1px solid black;
+    }
+    
+    .error {
+      color: red;
+    }
+  
+  
+  </style>
+</head>
+<body>
+<h1>Test</h1>
+<div>
+  <input id="eventText" type="text"/>
+  <button id="sendEvent">Send event</button>
+</div>
+<div id="result">
+  <h3>Received events:</h3>
+</div>
+</body>
+</html>
